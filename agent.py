@@ -107,7 +107,10 @@ def _generate_with_gemini_rest(prompt: str, model: str) -> str:
         ],
         "generationConfig": {
             "temperature": 0.3,
-            "maxOutputTokens": 120,
+            "maxOutputTokens": 256,
+            "thinkingConfig": {
+                "thinkingBudget": 0,
+            },
         },
     }
     request = urllib.request.Request(

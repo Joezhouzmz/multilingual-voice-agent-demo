@@ -18,6 +18,7 @@ It is intentionally small: the goal is to show practical understanding of speech
 - Optional Gemini agent backend when `GEMINI_API_KEY` is available.
 - Optional Whisper/faster-whisper ASR backend for real transcription.
 - Committed demo artifacts in [demo_results/](demo_results/).
+- Committed Gemini-backed demo artifacts in [demo_results_gemini/](demo_results_gemini/).
 - Per-stage latency and result logging in JSON.
 
 ## Architecture
@@ -90,7 +91,7 @@ outputs/
   run_log.json
 ```
 
-`outputs/` is ignored by git. Selected reviewable outputs are committed in [demo_results/](demo_results/).
+`outputs/` is ignored by git. Selected reviewable outputs are committed in [demo_results/](demo_results/) and [demo_results_gemini/](demo_results_gemini/).
 
 ## Demo Inputs
 
@@ -115,6 +116,22 @@ Detailed JSON outputs:
 - [demo_results/result_en.json](demo_results/result_en.json)
 - [demo_results/result_ja.json](demo_results/result_ja.json)
 - [demo_results/result_zh.json](demo_results/result_zh.json)
+
+## Gemini Demo Results
+
+The Gemini-backed agent path has also been run successfully with `gemini-2.5-flash`.
+
+| Input | Agent backend | Response text | Response audio | Total latency |
+| --- | --- | --- | --- | --- |
+| `sample_inputs/input_en.wav` | Gemini | I can help you with that. What is the appointment you would like to reschedule? | `demo_results_gemini/response_en_gemini.wav` | 6.3034s |
+| `sample_inputs/input_ja.wav` | Gemini | はい、承知いたしました。請求書についてどのような情報をお探しですか？ | `demo_results_gemini/response_ja_gemini.wav` | 6.7762s |
+| `sample_inputs/input_zh.wav` | Gemini | 好的，请问您想将预约更改到什么日期和时间？ | `demo_results_gemini/response_zh_gemini.wav` | 10.5106s |
+
+Detailed Gemini JSON outputs:
+
+- [demo_results_gemini/result_en_gemini.json](demo_results_gemini/result_en_gemini.json)
+- [demo_results_gemini/result_ja_gemini.json](demo_results_gemini/result_ja_gemini.json)
+- [demo_results_gemini/result_zh_gemini.json](demo_results_gemini/result_zh_gemini.json)
 
 ## Optional Gemini Agent
 
@@ -165,6 +182,13 @@ If no ASR backend is installed and no sidecar transcript is available, the pipel
 │   ├── result_en.json
 │   ├── result_ja.json
 │   └── result_zh.json
+├── demo_results_gemini/
+│   ├── response_en_gemini.wav
+│   ├── response_ja_gemini.wav
+│   ├── response_zh_gemini.wav
+│   ├── result_en_gemini.json
+│   ├── result_ja_gemini.json
+│   └── result_zh_gemini.json
 ├── scripts/
 │   └── create_demo_audio.py
 └── docs/
@@ -196,7 +220,6 @@ This prototype was built as a targeted speech-AI portfolio project. It focuses o
 
 - Add Silero VAD as an optional backend.
 - Run faster-whisper on the sample inputs and compare transcripts against sidecar text.
-- Add a Gemini-backed demo result set.
 - Replace macOS `say` with a higher-quality TTS backend for final presentation.
 - Add a short demo video or GIF showing input audio, transcript, response, and generated voice.
 

@@ -1,0 +1,51 @@
+{
+  "input_audio": "sample_inputs/input_zh.wav",
+  "run_id": "zh_gemini",
+  "language": "zh",
+  "transcript": "我想更改我的预约时间。",
+  "response_text": "好的，请问您想将预约更改到什么日期和时间？",
+  "speech_segment_path": "outputs/speech_segment_zh_gemini.wav",
+  "response_audio_path": "outputs/response_zh_gemini.wav",
+  "timings": {
+    "vad_seconds": 0.0333,
+    "asr_seconds": 0.0,
+    "agent_seconds": 9.8914,
+    "tts_seconds": 0.5855,
+    "total_seconds": 10.5106
+  },
+  "vad": {
+    "input_path": "sample_inputs/input_zh.wav",
+    "output_path": "outputs/speech_segment_zh_gemini.wav",
+    "backend": "energy_threshold",
+    "sample_rate": 22050,
+    "channels": 1,
+    "sample_width": 2,
+    "total_seconds": 2.769,
+    "speech_start_seconds": 0.0,
+    "speech_end_seconds": 2.4,
+    "speech_seconds": 2.4,
+    "note": "Trimmed with simple RMS threshold; use Silero VAD for stronger production comparison."
+  },
+  "asr": {
+    "transcript": "我想更改我的预约时间。",
+    "language": "zh",
+    "backend": "manual",
+    "model": "sidecar_or_cli_transcript",
+    "note": "Used provided transcript so the rest of the pipeline can run without ASR setup."
+  },
+  "agent": {
+    "response_text": "好的，请问您想将预约更改到什么日期和时间？",
+    "language": "zh",
+    "backend": "gemini",
+    "model": "gemini-2.5-flash",
+    "note": "Generated with Gemini through REST fallback."
+  },
+  "tts": {
+    "text": "好的，请问您想将预约更改到什么日期和时间？",
+    "language": "zh",
+    "output_path": "outputs/response_zh_gemini.wav",
+    "backend": "macos_say",
+    "voice": "Ting-Ting",
+    "note": "Generated AIFF with macOS say, then converted to WAV with afconvert."
+  }
+}

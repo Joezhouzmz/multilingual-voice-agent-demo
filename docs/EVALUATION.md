@@ -30,18 +30,28 @@ The first implementation supports two execution modes:
 
 The sidecar transcript mode is intentional. It lets the full VAD -> ASR interface -> agent -> TTS -> metrics loop run on a clean machine before optional ASR dependencies are installed.
 
-## Gemini Demo Status
+## Gemini Demo Results
 
-Gemini-backed agent execution is wired in `agent.py` through the optional `google-genai` client and a standard-library REST fallback.
+Gemini-backed agent execution is wired in `agent.py` through the optional `google-genai` client and a standard-library REST fallback. The committed Gemini demo results use `gemini-2.5-flash`.
 
-Current status: the local API key reached the Gemini API, but the request was rejected by quota with `RESOURCE_EXHAUSTED` / HTTP 429. Because of that, this repository does not yet include committed Gemini-backed demo artifacts. The next step is to rerun:
+Command set:
 
 ```bash
 export GEMINI_API_KEY="your-api-key"
-python3 main.py sample_inputs/input_en.wav --language en --agent-backend gemini --gemini-model gemini-2.0-flash-lite --run-id en_gemini
+python3 main.py sample_inputs/input_en.wav --language en --agent-backend gemini --gemini-model gemini-2.5-flash --run-id en_gemini
+python3 main.py sample_inputs/input_ja.wav --language ja --agent-backend gemini --gemini-model gemini-2.5-flash --run-id ja_gemini
+python3 main.py sample_inputs/input_zh.wav --language zh --agent-backend gemini --gemini-model gemini-2.5-flash --run-id zh_gemini
 ```
 
-with an API key that has available Gemini quota, then copy the selected `outputs/result_*_gemini.json` and `outputs/response_*_gemini.wav` files into a committed `demo_results_gemini/` folder.
+Results:
+
+| Input | Response | Total latency |
+| --- | --- | --- |
+| `sample_inputs/input_en.wav` | I can help you with that. What is the appointment you would like to reschedule? | 6.3034s |
+| `sample_inputs/input_ja.wav` | はい、承知いたしました。請求書についてどのような情報をお探しですか？ | 6.7762s |
+| `sample_inputs/input_zh.wav` | 好的，请问您想将预约更改到什么日期和时间？ | 10.5106s |
+
+Committed artifacts are available in `demo_results_gemini/`.
 
 ## Smoke-Test Results
 
