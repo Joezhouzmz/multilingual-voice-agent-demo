@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+gemini_api.txt
+*[Gg]emini*[Aa][Pp][Ii]*.txt
+*[Gg]emini*[Kk]ey*.txt
+outputs/*.wav
+outputs/*.mp3
+outputs/*.json

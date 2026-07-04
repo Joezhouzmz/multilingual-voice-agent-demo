@@ -1,0 +1,2 @@
+# Version 1 runs with the Python standard library on macOS.
+# Install requirements-optional.txt for Whisper/Gemini backends.
