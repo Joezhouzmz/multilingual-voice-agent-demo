@@ -1,69 +1,89 @@
 # Multilingual Voice Agent Demo
 
-A compact speech-to-speech AI agent prototype for multilingual customer-support workflows.
+An end-to-end multilingual voice-agent prototype that turns spoken customer-support requests into spoken AI responses.
 
-The committed demo path is real audio processing end to end:
+This project uses real speech and language-model stages:
 
 ```text
-audio -> Silero VAD -> faster-whisper ASR transcription -> Gemini -> macOS TTS -> JSON + WAV artifacts
+WAV audio -> Silero VAD -> faster-whisper ASR -> Gemini -> macOS TTS -> JSON + WAV artifacts
 ```
 
-The goal is not to train custom models or build a full application shell. The goal is to demonstrate practical voice-agent engineering: segmentation, transcription, response generation, speech synthesis, latency logging, and honest limitations across English, Japanese, and Chinese.
+The demo is intentionally compact. It is designed to show practical voice-agent engineering skills: speech segmentation, multilingual transcription, LLM response generation, speech synthesis, latency tracking, and clear evaluation.
 
-## Highlights
+## What It Demonstrates
 
+- Real audio input, not text-only chatbot input.
 - Real Voice Activity Detection with Silero VAD.
-- Real ASR transcription with faster-whisper.
-- Gemini-backed response generation through the Gemini REST API.
-- Real response audio generation with macOS `say` and `afconvert`.
-- English, Japanese, and Chinese sample audio inputs.
-- JSON artifacts that record backend, model, transcript, response text, output audio path, and per-stage latency.
+- Real multilingual ASR transcription with faster-whisper.
+- Real Gemini response generation through the Gemini API.
+- Real output voice files generated with macOS `say` and `afconvert`.
+- English, Japanese, and Chinese sample requests.
+- Per-stage metadata and latency in committed JSON artifacts.
 
-## Architecture
+## Pipeline
 
 ```text
 sample_inputs/input_*.wav
         |
         v
 vad.py
-  Silero VAD segments speech into speech_segment_*.wav
+  Silero VAD detects speech and writes speech_segment_*.wav
         |
         v
 asr.py
-  faster-whisper transcribes the speech segment
+  faster-whisper transcribes the detected speech segment
         |
         v
 agent.py
-  Gemini generates a short same-language support response
+  Gemini generates a concise same-language support reply
         |
         v
 tts.py
-  macOS say + afconvert produce response_*.wav
+  macOS say + afconvert generate response_*.wav
         |
         v
 demo_results/result_*.json
-demo_results/response_*.wav
 ```
 
-## Pipeline Components
+## Demo Inputs
 
-| Stage | File | Demo backend | Why this choice |
-| --- | --- | --- | --- |
-| Voice activity detection | `vad.py` | Silero VAD | Free, local, stronger than RMS thresholding, and appropriate for voice-agent endpointing demos. |
-| Speech-to-text | `asr.py` | faster-whisper | Practical local multilingual ASR with CPU int8 support. |
-| Agent response | `agent.py` | Gemini `gemini-2.5-flash` | Low-latency response generation for short customer-support turns. |
-| Text-to-speech | `tts.py` | macOS `say` + `afconvert` | Produces a real voice file without adding a paid TTS dependency. |
-| Metrics | `metrics.py` | JSON timing logs | Makes latency and backend choices inspectable. |
+| Language | Audio file | Spoken request |
+| --- | --- | --- |
+| English | `sample_inputs/input_en.wav` | I want to reschedule my appointment. |
+| Japanese | `sample_inputs/input_ja.wav` | 予約を変更したいです。 |
+| Chinese | `sample_inputs/input_zh.wav` | 我想更改我的预约时间。 |
 
-## Quick Start
+The `.txt` files in `sample_inputs/` document the intended sample phrases. The application does not read those files during the pipeline; ASR transcription comes from the WAV audio.
+
+## Demo Results
+
+Committed result artifacts live in [demo_results/](demo_results/). Each JSON file records the actual backend metadata:
+
+- `vad.backend == "silero"`
+- `asr.backend == "faster-whisper"`
+- `agent.backend == "gemini"`
+
+| Input audio | ASR transcript | Gemini response | Output audio | Total latency |
+| --- | --- | --- | --- | --- |
+| `sample_inputs/input_en.wav` | I want to reschedule my appointment. | I can help you with that. What is the appointment you would like to reschedule? | `demo_results/response_en.wav` | 6.0067s |
+| `sample_inputs/input_ja.wav` | 予約を変更したいです | 予約の変更ですね。予約番号を教えていただけますか？ | `demo_results/response_ja.wav` | 7.7829s |
+| `sample_inputs/input_zh.wav` | 我想更改我的预约时间 | 好的，请问您想将预约更改到什么时间？ | `demo_results/response_zh.wav` | 6.3455s |
+
+Detailed outputs:
+
+- [demo_results/result_en.json](demo_results/result_en.json)
+- [demo_results/result_ja.json](demo_results/result_ja.json)
+- [demo_results/result_zh.json](demo_results/result_zh.json)
+
+## Run Locally
 
 Requirements:
 
 - macOS with `say` and `afconvert`
 - Python 3.11
-- Gemini API key for the real agent path
+- Gemini API key
 
-Set up the local environment:
+Set up the environment:
 
 ```bash
 python3.11 -m venv .venv
@@ -71,13 +91,13 @@ python3.11 -m venv .venv
 .venv/bin/python -m pip install -r requirements-optional.txt
 ```
 
-Generate or refresh the sample input audio files:
+Generate sample input audio if needed:
 
 ```bash
 .venv/bin/python scripts/create_demo_audio.py
 ```
 
-Run the real demo path:
+Run the real pipeline:
 
 ```bash
 export GEMINI_API_KEY="your-api-key"
@@ -86,49 +106,29 @@ export GEMINI_API_KEY="your-api-key"
 .venv/bin/python main.py sample_inputs/input_zh.wav --language zh --run-id zh
 ```
 
-The CLI always runs the real pipeline: Silero VAD, faster-whisper ASR, Gemini, and macOS TTS. The default ASR model is `small`. To reproduce the committed artifact set exactly, set `ASR_MODEL=local_models/faster-whisper-base` after downloading that ignored local model folder.
+The default ASR model is `small`. To reproduce the committed demo results exactly, use the same local CTranslate2 model folder:
 
-## Demo Inputs
+```bash
+ASR_MODEL=local_models/faster-whisper-base \
+GEMINI_API_KEY="your-api-key" \
+.venv/bin/python main.py sample_inputs/input_en.wav --language en --run-id en
+```
 
-| Language | Input audio | Sample request |
-| --- | --- | --- |
-| English | `sample_inputs/input_en.wav` | I want to reschedule my appointment. |
-| Japanese | `sample_inputs/input_ja.wav` | 予約を変更したいです。 |
-| Chinese | `sample_inputs/input_zh.wav` | 我想更改我的预约时间。 |
+`local_models/` is ignored by git because model weights should not be committed.
 
-The `.txt` files in `sample_inputs/` document the intended sample phrases. `main.py` does not read them.
-
-## Demo Results
-
-Committed artifacts are in [demo_results/](demo_results/). Each JSON file proves the real backends used:
-
-- `vad.backend == "silero"`
-- `asr.backend == "faster-whisper"`
-- `agent.backend == "gemini"`
-
-| Input | ASR transcript | Gemini response | Response audio | Total latency |
-| --- | --- | --- | --- | --- |
-| `sample_inputs/input_en.wav` | I want to reschedule my appointment. | I can help you with that. What is the appointment you would like to reschedule? | `demo_results/response_en.wav` | 6.0067s |
-| `sample_inputs/input_ja.wav` | 予約を変更したいです | 予約の変更ですね。予約番号を教えていただけますか？ | `demo_results/response_ja.wav` | 7.7829s |
-| `sample_inputs/input_zh.wav` | 我想更改我的预约时间 | 好的，请问您想将预约更改到什么时间？ | `demo_results/response_zh.wav` | 6.3455s |
-
-Detailed JSON outputs:
-
-- [demo_results/result_en.json](demo_results/result_en.json)
-- [demo_results/result_ja.json](demo_results/result_ja.json)
-- [demo_results/result_zh.json](demo_results/result_zh.json)
-
-## Repository Layout
+## Repository Structure
 
 ```text
 .
-├── main.py
-├── vad.py
-├── asr.py
-├── agent.py
-├── tts.py
-├── metrics.py
-├── languages.py
+├── main.py                         # Pipeline entry point
+├── vad.py                          # Silero VAD speech segmentation
+├── asr.py                          # faster-whisper transcription
+├── agent.py                        # Gemini response generation
+├── tts.py                          # macOS TTS to WAV
+├── metrics.py                      # JSON output and latency logging
+├── languages.py                    # Language profiles and sample phrases
+├── requirements.txt
+├── requirements-optional.txt
 ├── sample_inputs/
 │   ├── input_en.wav
 │   ├── input_en.txt
@@ -137,12 +137,17 @@ Detailed JSON outputs:
 │   ├── input_zh.wav
 │   └── input_zh.txt
 ├── demo_results/
+│   ├── README.md
+│   ├── speech_segment_en.wav
+│   ├── speech_segment_ja.wav
+│   ├── speech_segment_zh.wav
 │   ├── response_en.wav
 │   ├── response_ja.wav
 │   ├── response_zh.wav
 │   ├── result_en.json
 │   ├── result_ja.json
-│   └── result_zh.json
+│   ├── result_zh.json
+│   └── run_log.json
 ├── scripts/
 │   └── create_demo_audio.py
 └── docs/
@@ -151,20 +156,29 @@ Detailed JSON outputs:
     └── EVALUATION.md
 ```
 
+## Design Choices
+
+| Stage | Choice | Reason |
+| --- | --- | --- |
+| VAD | Silero VAD | Free, local, stronger than hand-written amplitude thresholding. |
+| ASR | faster-whisper | Practical multilingual transcription with CPU int8 support. |
+| Agent | Gemini 2.5 Flash | Good latency/cost profile for short support-agent responses. |
+| TTS | macOS `say` + `afconvert` | Produces real local WAV output without requiring a paid TTS service. |
+| Metrics | JSON logs | Makes backend choices, transcripts, output paths, and latency inspectable. |
+
 ## Limitations
 
-- The sample input audio is synthetic macOS-generated speech, not real human recordings.
-- The pipeline is file-based, not real-time streaming.
-- macOS `say` is useful for a local demo but is not production-grade neural TTS.
-- Model weights are not committed. They download on first use or can be stored locally under ignored `local_models/`.
-- On some macOS environments, Torch/Silero and CTranslate2 can load duplicate OpenMP runtimes; the faster-whisper backend sets a scoped compatibility environment variable for this local demo.
+- Sample input audio is synthetic macOS-generated speech, not real human recordings.
+- The prototype is file-based, not a real-time streaming voice agent.
+- macOS `say` is useful for local output files but is not production-grade neural TTS.
+- Model weights and API keys are intentionally not committed.
 
-## Production Direction
+## Next Steps
 
-- Replace macOS `say` with managed neural TTS or a local neural TTS model.
-- Evaluate ASR with real recorded English/Japanese/Chinese audio, not only synthetic samples.
-- Add streaming endpointing and barge-in handling.
-- Add structured intent extraction and tool calls after Gemini response generation.
-- Track WER, endpointing accuracy, and latency across more samples.
+- Add real self-recorded English, Japanese, and Chinese samples.
+- Compare `base`, `small`, and managed ASR APIs on the same audio set.
+- Add word error rate or character error rate evaluation.
+- Replace macOS TTS with a higher-quality neural TTS backend.
+- Extend the Gemini stage with structured intent extraction or tool calls.
 
-More design rationale is in [docs/PIPELINE_DESIGN_AND_MODEL_CHOICES.md](docs/PIPELINE_DESIGN_AND_MODEL_CHOICES.md). Evaluation notes are in [docs/EVALUATION.md](docs/EVALUATION.md).
+Additional design rationale is in [docs/PIPELINE_DESIGN_AND_MODEL_CHOICES.md](docs/PIPELINE_DESIGN_AND_MODEL_CHOICES.md). Evaluation notes are in [docs/EVALUATION.md](docs/EVALUATION.md).
