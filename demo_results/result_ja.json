@@ -1,0 +1,52 @@
+{
+  "input_audio": "sample_inputs/input_ja.wav",
+  "run_id": "ja",
+  "language": "ja",
+  "transcript": "予約を変更したいです",
+  "response_text": "予約の変更ですね。予約番号を教えていただけますか？",
+  "speech_segment_path": "demo_results/speech_segment_ja.wav",
+  "response_audio_path": "demo_results/response_ja.wav",
+  "timings": {
+    "vad_seconds": 2.1848,
+    "asr_seconds": 3.4001,
+    "agent_seconds": 1.8518,
+    "tts_seconds": 0.346,
+    "total_seconds": 7.7829
+  },
+  "vad": {
+    "input_path": "sample_inputs/input_ja.wav",
+    "output_path": "demo_results/speech_segment_ja.wav",
+    "backend": "silero",
+    "sample_rate": 16000,
+    "channels": 1,
+    "sample_width": 2,
+    "total_seconds": 2.11,
+    "speech_start_seconds": 0.0,
+    "speech_end_seconds": 2.11,
+    "speech_seconds": 2.11,
+    "num_speech_segments": 1,
+    "note": "Segmented speech with Silero VAD."
+  },
+  "asr": {
+    "transcript": "予約を変更したいです",
+    "language": "ja",
+    "backend": "faster-whisper",
+    "model": "local_models/faster-whisper-base",
+    "note": "Transcribed with faster-whisper."
+  },
+  "agent": {
+    "response_text": "予約の変更ですね。予約番号を教えていただけますか？",
+    "language": "ja",
+    "backend": "gemini",
+    "model": "gemini-2.5-flash",
+    "note": "Generated with Gemini through REST."
+  },
+  "tts": {
+    "text": "予約の変更ですね。予約番号を教えていただけますか？",
+    "language": "ja",
+    "output_path": "demo_results/response_ja.wav",
+    "backend": "macos_say",
+    "voice": "Kyoko",
+    "note": "Generated AIFF with macOS say, then converted to WAV with afconvert."
+  }
+}

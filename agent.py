@@ -64,16 +64,8 @@ User transcript: {transcript}
         transcript=transcript,
     )
 
-    try:
-        from google import genai
-
-        client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-        response = client.models.generate_content(model=model, contents=prompt)
-        text = getattr(response, "text", "") or ""
-        backend_note = "Generated with Gemini through google-genai."
-    except ImportError:
-        text = _generate_with_gemini_rest(prompt, model)
-        backend_note = "Generated with Gemini through REST fallback."
+    text = _generate_with_gemini_rest(prompt, model)
+    backend_note = "Generated with Gemini through REST."
 
     text = text.strip()
     if not text:

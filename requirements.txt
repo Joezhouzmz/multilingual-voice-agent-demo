@@ -1,2 +1,2 @@
-# Version 1 runs with the Python standard library on macOS.
-# Install requirements-optional.txt for Whisper/Gemini backends.
+# Core code uses the Python standard library plus macOS say/afconvert.
+# Install requirements-optional.txt for Silero VAD and faster-whisper ASR.

@@ -10,3 +10,4 @@ gemini_api.txt
 outputs/*.wav
 outputs/*.mp3
 outputs/*.json
+local_models/

@@ -1,0 +1,52 @@
+{
+  "input_audio": "sample_inputs/input_zh.wav",
+  "run_id": "zh",
+  "language": "zh",
+  "transcript": "我想更改我的预约时间",
+  "response_text": "好的，请问您想将预约更改到什么时间？",
+  "speech_segment_path": "demo_results/speech_segment_zh.wav",
+  "response_audio_path": "demo_results/response_zh.wav",
+  "timings": {
+    "vad_seconds": 2.2121,
+    "asr_seconds": 2.4213,
+    "agent_seconds": 1.4308,
+    "tts_seconds": 0.2809,
+    "total_seconds": 6.3455
+  },
+  "vad": {
+    "input_path": "sample_inputs/input_zh.wav",
+    "output_path": "demo_results/speech_segment_zh.wav",
+    "backend": "silero",
+    "sample_rate": 16000,
+    "channels": 1,
+    "sample_width": 2,
+    "total_seconds": 2.769,
+    "speech_start_seconds": 0.0,
+    "speech_end_seconds": 2.52,
+    "speech_seconds": 2.52,
+    "num_speech_segments": 1,
+    "note": "Segmented speech with Silero VAD."
+  },
+  "asr": {
+    "transcript": "我想更改我的预约时间",
+    "language": "zh",
+    "backend": "faster-whisper",
+    "model": "local_models/faster-whisper-base",
+    "note": "Transcribed with faster-whisper."
+  },
+  "agent": {
+    "response_text": "好的，请问您想将预约更改到什么时间？",
+    "language": "zh",
+    "backend": "gemini",
+    "model": "gemini-2.5-flash",
+    "note": "Generated with Gemini through REST."
+  },
+  "tts": {
+    "text": "好的，请问您想将预约更改到什么时间？",
+    "language": "zh",
+    "output_path": "demo_results/response_zh.wav",
+    "backend": "macos_say",
+    "voice": "Ting-Ting",
+    "note": "Generated AIFF with macOS say, then converted to WAV with afconvert."
+  }
+}

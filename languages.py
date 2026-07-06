@@ -25,7 +25,7 @@ LANGUAGE_PROFILES = {
         code="ja",
         name="Japanese",
         macos_voice="Kyoko",
-        sample_text="請求書について確認したいです。",
+        sample_text="予約を変更したいです。",
     ),
     "zh": LanguageProfile(
         code="zh",

@@ -12,7 +12,7 @@ from asr import ASRUnavailable, transcribe_audio
 from languages import SUPPORTED_LANGUAGES, normalize_language
 from metrics import append_run_log, timed_stage, write_json
 from tts import synthesize_speech
-from vad import trim_silence
+from vad import segment_speech
 
 
 def parse_args() -> argparse.Namespace:
@@ -29,17 +29,23 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--transcript",
         default=None,
-        help="Manual transcript fallback. If omitted, a sidecar .txt file is used when present.",
+        help="Manual transcript for --asr-backend manual only.",
+    )
+    parser.add_argument(
+        "--vad-backend",
+        default="silero",
+        choices=("silero", "energy"),
+        help="VAD backend. silero is the demo path; energy is a development fallback.",
     )
     parser.add_argument(
         "--asr-backend",
-        default="auto",
-        choices=("auto", "manual", "faster-whisper", "whisper"),
-        help="ASR backend. Use manual with --transcript or sidecar .txt.",
+        default="faster-whisper",
+        choices=("faster-whisper", "whisper", "manual"),
+        help="ASR backend. faster-whisper is the demo path; manual is development-only.",
     )
     parser.add_argument(
         "--asr-model",
-        default="base",
+        default="small",
         help="Whisper/faster-whisper model size when an ASR backend is installed.",
     )
     parser.add_argument(
@@ -73,7 +79,16 @@ def main() -> int:
     output_dir = args.output_dir
     run_id = args.run_id or input_audio.stem
     language = normalize_language(args.language)
-    manual_transcript = args.transcript or _read_sidecar_transcript(input_audio)
+    if args.transcript and args.asr_backend != "manual":
+        print(
+            "--transcript can only be used with --asr-backend manual. "
+            "Use faster-whisper without --transcript for real ASR transcription.",
+            file=sys.stderr,
+        )
+        return 2
+    manual_transcript = None
+    if args.asr_backend == "manual":
+        manual_transcript = args.transcript or _read_sidecar_transcript(input_audio)
 
     speech_segment_path = output_dir / "speech_segment_{}.wav".format(run_id)
     response_audio_path = output_dir / "response_{}.wav".format(run_id)
@@ -85,15 +100,14 @@ def main() -> int:
 
     try:
         with timed_stage("vad", timings):
-            vad_result = trim_silence(input_audio, speech_segment_path)
+            vad_result = segment_speech(input_audio, speech_segment_path, backend=args.vad_backend)
 
         with timed_stage("asr", timings):
-            asr_backend = "manual" if args.asr_backend == "manual" else args.asr_backend
             asr_result = transcribe_audio(
                 speech_segment_path,
                 language=language,
                 manual_transcript=manual_transcript,
-                backend=asr_backend,
+                backend=args.asr_backend,
                 model=args.asr_model,
             )
 

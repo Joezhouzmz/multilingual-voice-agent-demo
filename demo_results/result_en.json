@@ -1,49 +1,50 @@
 {
   "input_audio": "sample_inputs/input_en.wav",
-  "run_id": "en_gemini",
+  "run_id": "en",
   "language": "en",
   "transcript": "I want to reschedule my appointment.",
   "response_text": "I can help you with that. What is the appointment you would like to reschedule?",
-  "speech_segment_path": "outputs/speech_segment_en_gemini.wav",
-  "response_audio_path": "outputs/response_en_gemini.wav",
+  "speech_segment_path": "demo_results/speech_segment_en.wav",
+  "response_audio_path": "demo_results/response_en.wav",
   "timings": {
-    "vad_seconds": 0.0328,
-    "asr_seconds": 0.0,
-    "agent_seconds": 5.5075,
-    "tts_seconds": 0.7626,
-    "total_seconds": 6.3034
+    "vad_seconds": 1.7151,
+    "asr_seconds": 2.4751,
+    "agent_seconds": 1.493,
+    "tts_seconds": 0.3231,
+    "total_seconds": 6.0067
   },
   "vad": {
     "input_path": "sample_inputs/input_en.wav",
-    "output_path": "outputs/speech_segment_en_gemini.wav",
-    "backend": "energy_threshold",
-    "sample_rate": 22050,
+    "output_path": "demo_results/speech_segment_en.wav",
+    "backend": "silero",
+    "sample_rate": 16000,
     "channels": 1,
     "sample_width": 2,
     "total_seconds": 2.215,
     "speech_start_seconds": 0.0,
-    "speech_end_seconds": 2.19,
-    "speech_seconds": 2.19,
-    "note": "Trimmed with simple RMS threshold; use Silero VAD for stronger production comparison."
+    "speech_end_seconds": 2.215,
+    "speech_seconds": 2.215,
+    "num_speech_segments": 1,
+    "note": "Segmented speech with Silero VAD."
   },
   "asr": {
     "transcript": "I want to reschedule my appointment.",
     "language": "en",
-    "backend": "manual",
-    "model": "sidecar_or_cli_transcript",
-    "note": "Used provided transcript so the rest of the pipeline can run without ASR setup."
+    "backend": "faster-whisper",
+    "model": "local_models/faster-whisper-base",
+    "note": "Transcribed with faster-whisper."
   },
   "agent": {
     "response_text": "I can help you with that. What is the appointment you would like to reschedule?",
     "language": "en",
     "backend": "gemini",
     "model": "gemini-2.5-flash",
-    "note": "Generated with Gemini through REST fallback."
+    "note": "Generated with Gemini through REST."
   },
   "tts": {
     "text": "I can help you with that. What is the appointment you would like to reschedule?",
     "language": "en",
-    "output_path": "outputs/response_en_gemini.wav",
+    "output_path": "demo_results/response_en.wav",
     "backend": "macos_say",
     "voice": "Samantha",
     "note": "Generated AIFF with macOS say, then converted to WAV with afconvert."

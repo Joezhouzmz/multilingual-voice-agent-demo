@@ -21,6 +21,7 @@ The point is to show that I understand the full speech-agent workflow and can ma
 multilingual-voice-agent-demo/
   README.md
   requirements.txt
+  requirements-optional.txt
   main.py
 
   vad.py
@@ -38,11 +39,16 @@ multilingual-voice-agent-demo/
     input_ja.txt
     input_zh.txt
 
-  outputs/
+  demo_results/
+    result_en.json
+    result_ja.json
+    result_zh.json
     response_en.wav
     response_ja.wav
     response_zh.wav
-    run_log.json
+
+  outputs/
+    ignored working artifacts
 
   docs/
     PROJECT_BRIEF.md
@@ -51,6 +57,9 @@ multilingual-voice-agent-demo/
 
   scripts/
     create_demo_audio.py
+
+  local_models/
+    ignored faster-whisper model folders
 ```
 
 Expected core file count:
@@ -74,11 +83,11 @@ The pipeline is:
 
 ```text
 Audio input
--> VAD / speech segmentation
--> ASR transcription
--> LLM agent response
--> TTS synthesis
--> output audio + run log
+-> Silero VAD / speech segmentation
+-> faster-whisper ASR transcription
+-> Gemini agent response
+-> macOS TTS synthesis
+-> output audio + JSON result log
 ```
 
 ### Example Inputs
@@ -92,7 +101,7 @@ I want to reschedule my appointment.
 Japanese:
 
 ```text
-請求書について確認したいです。
+予約を変更したいです。
 ```
 
 Chinese:
@@ -105,11 +114,11 @@ Chinese:
 
 For each input file, the pipeline should produce:
 
-- Clean speech segment: `outputs/speech_segment_en.wav`
+- Clean speech segment: `demo_results/speech_segment_en.wav`
 - Transcript: `I want to reschedule my appointment.`
-- Agent response text: `Sure. What date and time would you prefer?`
-- Response audio: `outputs/response_en.wav`
-- Result log: `outputs/run_log.json`
+- Agent response text: `I can help you with that. What is the appointment you would like to reschedule?`
+- Response audio: `demo_results/response_en.wav`
+- Result log: `demo_results/result_en.json`
 
 ## 4. What Is VAD and Why We Need It
 
@@ -438,9 +447,9 @@ Production comparison candidates:
 
 Version 1 is done when:
 
-- `python main.py sample_inputs/input_en.wav` runs end to end.
+- `.venv/bin/python main.py sample_inputs/input_en.wav` runs end to end with Silero VAD, faster-whisper ASR, Gemini, and TTS.
 - English, Japanese, and Chinese examples are documented.
-- At least one response audio file is generated.
-- `outputs/run_log.json` records transcript, response, latency, and output path.
+- Three committed response audio files are generated in `demo_results/`.
+- `demo_results/result_*.json` records transcript, response, latency, and output path.
 - `docs/EVALUATION.md` lists what worked, what failed, and what should improve next.
 - The README explains the system without exaggerating it.

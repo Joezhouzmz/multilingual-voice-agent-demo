@@ -19,7 +19,7 @@ Create a small speech-to-speech assistant that accepts a spoken customer-support
 The core task is:
 
 ```text
-audio input -> transcript -> response text -> response audio
+audio input -> VAD -> ASR transcript -> Gemini response text -> response audio
 ```
 
 The prototype should be multilingual and language-aware, with English, Japanese, and Chinese examples.
@@ -48,11 +48,13 @@ multilingual-voice-agent-demo/
 
 ### Step 2: Audio Input
 
-Use short manually recorded audio files:
+Use short demo audio files:
 
 - English customer-support request
 - Japanese customer-support request
 - Chinese customer-support request
+
+Current version uses synthetic macOS-generated sample audio for reproducibility. Real recorded speech should be added before making broad accuracy claims.
 
 ### Step 3: Speech Pipeline
 
@@ -91,9 +93,9 @@ Example result table:
 
 | Input | Language | ASR Transcript | Agent Response | Output | Total Latency |
 | --- | --- | --- | --- | --- | --- |
-| `sample_inputs/input_en.wav` | English | I want to reschedule my appointment. | Sure. What date and time would you prefer? | `outputs/response_en.wav` | 3.3s |
-| `sample_inputs/input_ja.wav` | Japanese | 請求書について確認したいです。 | 請求書についてですね。確認したい内容を教えてください。 | `outputs/response_ja.wav` | 3.8s |
-| `sample_inputs/input_zh.wav` | Chinese | 我想更改我的预约时间。 | 当然可以。您想改到哪一天和几点？ | `outputs/response_zh.wav` | 3.6s |
+| `sample_inputs/input_en.wav` | English | I want to reschedule my appointment. | I can help you with that. What is the appointment you would like to reschedule? | `demo_results/response_en.wav` | 6.0067s |
+| `sample_inputs/input_ja.wav` | Japanese | 予約を変更したいです | 予約の変更ですね。予約番号を教えていただけますか？ | `demo_results/response_ja.wav` | 7.7829s |
+| `sample_inputs/input_zh.wav` | Chinese | 我想更改我的预约时间 | 好的，请问您想将预约更改到什么时间？ | `demo_results/response_zh.wav` | 6.3455s |
 
 ## 5. Scope Control
 

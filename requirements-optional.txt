@@ -1,5 +1,5 @@
-# Optional ASR backend. Downloads model weights on first use.
-faster-whisper>=1.0.0
-
-# Optional Gemini agent backend. Requires GEMINI_API_KEY.
-google-genai>=0.3.0
+# Optional speech backends. Model weights download on first use.
+faster-whisper>=1.1.0
+silero-vad>=6.2.1
+numpy<2
+torch>=2.2.0
